@@ -23,7 +23,7 @@
     "find-up": "^5.0.0"
   },
   "peerDependencies": {
-    "prisma": "^2.21.2"
+    "prisma": "^5.10.1"
   },
   "devDependencies": {
     "@types/node": "^14.0.23",

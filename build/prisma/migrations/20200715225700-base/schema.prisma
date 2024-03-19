@@ -1,6 +1,6 @@
 datasource management {
-  provider = "postgresql"
-  url      = env("PMT_MANAGEMENT_URL")
+  provider = ["sqlite","mysql","postgresql"]
+  url = "***"
 }
 
 generator client {

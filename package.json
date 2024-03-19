@@ -20,7 +20,6 @@
     "prettier": "prettier \"src/**/*.ts\" --check"
   },
   "dependencies": {
-    "@prisma/client": "git+https://github.com:Marcatech/pmt-client.git",
     "find-up": "^5.0.0"
   },
   "peerDependencies": {

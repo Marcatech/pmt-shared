@@ -36,10 +36,7 @@ export const setManagementEnv = async (): Promise<void> => {
 }
 
 export const envPaths = [
-  'prisma/.env',
-  'db/.env', // Blitz
-  '../.env.defaults', // Redwood
-  '.env',
+  'C:/Users/Domme/Documents/Coding/Marcatech/GithubOrg/Backend/onestaff-backend/.env',
 ]
 
 export const getEnvPath = async (schemaPath?: string): Promise<string> => {
@@ -76,13 +73,12 @@ export const writeEnvFile = async (content: string, schemaPath?: string): Promis
 }
 
 export const schemaPaths = [
-  'prisma/schema.prisma',
-  'db/schema.prisma', // Blitz
-  'api/prisma/schema.prisma', // Redwood
-  'schema.prisma',
+  'C:/Users/Domme/Documents/Coding/Marcatech/GithubOrg/Backend/onestaff-backend/prisma/schema.prisma',
 ]
 
 export const getSchemaPath = async (): Promise<string> => {
+  console.log(schemaPaths);
+  
   for (const schemaPath of schemaPaths) {
     if (await fileExists(schemaPath)) {
       return schemaPath

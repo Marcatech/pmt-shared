@@ -112,7 +112,6 @@ export const isPrismaCliLocallyInstalled = async (): Promise<boolean> => {
 }
 
 export const runLocalPrisma = async (cmd: string): Promise<string | Buffer> => {
-  const prismaCliPath = await getPrismaCliPath()
   const managementEnv = await getManagementEnv()
 
   const nodeModules = await getNodeModules()
@@ -120,7 +119,7 @@ export const runLocalPrisma = async (cmd: string): Promise<string | Buffer> => {
   const PMT_OUTPUT = path.join(nodeModules, clientManagementPath)
   const schemaPath = path.join(__dirname, 'prisma/schema.prisma')
 
-  return runLocal(`node "${prismaCliPath}" ${cmd} --schema="${schemaPath}"`, {
+  return runLocal(`npx prisma ${cmd} --schema="${schemaPath}"`, {
     ...managementEnv,
     PMT_OUTPUT,
   })
@@ -131,8 +130,7 @@ export const runDistantPrisma = async (
   tenant?: Datasource,
   withTimeout = true
 ): Promise<string | Buffer> => {
-  const prismaCliPath = await getPrismaCliPath()
-  const promise = runDistant(`node "${prismaCliPath}" ${cmd}`, tenant)
+  const promise = runDistant(`npx prisma ${cmd}`, tenant)
 
   if (!withTimeout) {
     return promise

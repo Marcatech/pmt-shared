@@ -24,6 +24,8 @@ class Management {
                 return this.client;
             yield env_1.setManagementEnv();
             let PrismaClient;
+            console.log("Getting client...");
+            console.log(this.options);
             if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.PrismaClient) {
                 PrismaClient = (_b = this.options) === null || _b === void 0 ? void 0 : _b.PrismaClient;
             }
@@ -36,7 +38,7 @@ class Management {
                     process.exit(1);
                 }
             }
-            this.client = new PrismaClient(Object.assign({ debug: process.env.verbose == 'true' }, this.options));
+            this.client = new PrismaClient(Object.assign({}, this.options));
             return this.client;
         });
     }

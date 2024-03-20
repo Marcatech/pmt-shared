@@ -95,16 +95,14 @@ exports.isPrismaCliLocallyInstalled = () => __awaiter(void 0, void 0, void 0, fu
         .catch(() => false);
 });
 exports.runLocalPrisma = (cmd) => __awaiter(void 0, void 0, void 0, function* () {
-    const prismaCliPath = yield exports.getPrismaCliPath();
     const managementEnv = yield env_1.getManagementEnv();
     const nodeModules = yield exports.getNodeModules();
     const PMT_OUTPUT = path_1.default.join(nodeModules, constants_1.clientManagementPath);
     const schemaPath = path_1.default.join(__dirname, 'prisma/schema.prisma');
-    return exports.runLocal(`node "${prismaCliPath}" ${cmd} --schema="${schemaPath}"`, Object.assign(Object.assign({}, managementEnv), { PMT_OUTPUT }));
+    return exports.runLocal(`npx prisma ${cmd} --schema="${schemaPath}"`, Object.assign(Object.assign({}, managementEnv), { PMT_OUTPUT }));
 });
 exports.runDistantPrisma = (cmd, tenant, withTimeout = true) => __awaiter(void 0, void 0, void 0, function* () {
-    const prismaCliPath = yield exports.getPrismaCliPath();
-    const promise = exports.runDistant(`node "${prismaCliPath}" ${cmd}`, tenant);
+    const promise = exports.runDistant(`npx prisma ${cmd}`, tenant);
     if (!withTimeout) {
         return promise;
     }

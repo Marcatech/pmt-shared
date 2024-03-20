@@ -24,7 +24,10 @@ export default class Management {
     await setManagementEnv()
 
     let PrismaClient
-
+    console.log("Getting client...");
+    
+    console.log(this.options);
+    
     if (this.options?.PrismaClient) {
       PrismaClient = this.options?.PrismaClient
     } else {
@@ -39,7 +42,6 @@ export default class Management {
     }
 
     this.client = new PrismaClient({
-      debug: process.env.verbose == 'true',
       ...this.options,
     })
 

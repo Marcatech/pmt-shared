@@ -24,8 +24,6 @@ class Management {
                 return this.client;
             yield env_1.setManagementEnv();
             let PrismaClient;
-            console.log("Getting client...");
-            console.log(this.options);
             if ((_a = this.options) === null || _a === void 0 ? void 0 : _a.PrismaClient) {
                 PrismaClient = (_b = this.options) === null || _b === void 0 ? void 0 : _b.PrismaClient;
             }
@@ -38,7 +36,7 @@ class Management {
                     process.exit(1);
                 }
             }
-            this.client = new PrismaClient(Object.assign({}, this.options));
+            this.client = new PrismaClient();
             return this.client;
         });
     }
@@ -70,7 +68,7 @@ class Management {
     exists(name) {
         return __awaiter(this, void 0, void 0, function* () {
             const client = yield this.getClient();
-            const tenant = yield client.tenant.findOne({ where: { name } });
+            const tenant = yield client.tenant.findUnique({ where: { name } });
             return !!tenant;
         });
     }

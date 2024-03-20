@@ -23,10 +23,7 @@ export default class Management {
 
     await setManagementEnv()
 
-    let PrismaClient
-    console.log("Getting client...");
-    
-    console.log(this.options);
+    let PrismaClient  
     
     if (this.options?.PrismaClient) {
       PrismaClient = this.options?.PrismaClient
@@ -41,9 +38,7 @@ export default class Management {
       }
     }
 
-    this.client = new PrismaClient({
-      ...this.options,
-    })
+    this.client = new PrismaClient()
 
     return this.client
   }
@@ -76,7 +71,7 @@ export default class Management {
   async exists(name: string): Promise<boolean> {
     const client = await this.getClient()
 
-    const tenant = await client.tenant.findOne({ where: { name } })
+    const tenant = await client.tenant.findUnique({ where: { name } })
 
     return !!tenant
   }

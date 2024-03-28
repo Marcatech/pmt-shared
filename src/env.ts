@@ -35,11 +35,18 @@ export const setManagementEnv = async (): Promise<void> => {
   Object.entries(managementEnv).forEach(([key, value]) => (process.env[key] = value))
 }
 
-export const envPaths = [
-  'C:/Users/Domme/Documents/Coding/Marcatech/GithubOrg/Backend/onestaff-backend/.env',
-]
+export const envPaths = [process.env.ENV_PATH]
 
 export const getEnvPath = async (schemaPath?: string): Promise<string> => {
+  // First, check if ENV_PATH is defined and if the file exists
+  if (process.env.ENV_PATH) {
+    const envPathFromEnvVar = process.env.ENV_PATH
+    if (await fileExists(envPathFromEnvVar)) {
+      return envPathFromEnvVar
+    }
+  }
+
+  // If schemaPath is provided, check for .env file in the same directory
   if (schemaPath) {
     const envPath = path.join(path.dirname(schemaPath), '.env')
     if (await fileExists(envPath)) {
@@ -47,8 +54,9 @@ export const getEnvPath = async (schemaPath?: string): Promise<string> => {
     }
   }
 
+  // Check the predefined paths
   for (const envPath of envPaths) {
-    if (await fileExists(envPath)) {
+    if (envPath && (await fileExists(envPath))) {
       return envPath
     }
   }
@@ -72,15 +80,12 @@ export const writeEnvFile = async (content: string, schemaPath?: string): Promis
   return fs.promises.writeFile(path, content)
 }
 
-export const schemaPaths = [
-  'C:/Users/Domme/Documents/Coding/Marcatech/GithubOrg/Backend/onestaff-backend/prisma/schema.prisma',
-]
+export const schemaPaths = [process.env.SCHEMA_PATH]
 
 export const getSchemaPath = async (): Promise<string> => {
-  console.log(schemaPaths);
-  
+  console.log(schemaPaths)
   for (const schemaPath of schemaPaths) {
-    if (await fileExists(schemaPath)) {
+    if (schemaPath && (await fileExists(schemaPath))) {
       return schemaPath
     }
   }

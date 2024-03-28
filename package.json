@@ -1,6 +1,6 @@
 {
   "name": "prisma-multi-tenant-shared-updated",
-  "version": "2.5.1",
+  "version": "2.5.11",
   "description": "Shared methods and constants for prisma-multi-tenant",
   "author": {
     "name": "Thibaud Courtoison",
@@ -14,8 +14,7 @@
     "build"
   ],
   "scripts": {
-    "prepare": "if exist build rmdir /s /q build && npm run build && xcopy /E /I src\\prisma\\ build\\prisma\\",
-    "build": "tsc",
+    "build": "tsc && cp -R src/prisma/ build/prisma/",
     "lint": "eslint src/**/*.ts",
     "prettier": "prettier \"src/**/*.ts\" --check"
   },

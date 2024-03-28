@@ -42,13 +42,21 @@ class Management {
     }
     create(tenant) {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log("inside management create");
             const client = yield this.getClient();
+            console.log("client found");
+            console.log(client);
+            console.log(tenant);
             try {
-                return yield client.tenant.create({
+                const result = client.tenant.create({
                     data: tenant,
                 });
+                console.log("...done");
+                console.log(result);
+                return result;
             }
             catch (err) {
+                console.log("error happened");
                 if (err.code == 'P2002')
                     throw new errors_1.PmtError('tenant-already-exists', tenant.name);
                 throw err;

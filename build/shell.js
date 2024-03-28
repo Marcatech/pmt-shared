@@ -77,9 +77,25 @@ exports.runLocal = (cmd, env) => __awaiter(void 0, void 0, void 0, function* () 
     });
 });
 exports.runDistant = (cmd, tenant) => {
-    return exports.runShell(cmd, {
-        cwd: process.cwd(),
-        env: Object.assign(Object.assign({}, process.env), { DATABASE_URL: (tenant === null || tenant === void 0 ? void 0 : tenant.url) || process.env.DATABASE_URL || 'PMT_TMP_URL' }),
+    console.log(`Executing command: ${cmd}`);
+    if (tenant) {
+        console.log(`Tenant: ${tenant.name}`);
+    }
+    return new Promise((resolve, reject) => {
+        child_process_1.exec(cmd, {
+            cwd: process.cwd(),
+            env: Object.assign(Object.assign({}, process.env), { DATABASE_URL: (tenant === null || tenant === void 0 ? void 0 : tenant.url) || process.env.DATABASE_URL || 'PMT_TMP_URL' }),
+        }, (error, stdout, stderr) => {
+            if (error) {
+                console.error('Error:', error);
+                return reject(error);
+            }
+            if (stderr) {
+                console.log('Standard Error Output:', stderr);
+            }
+            console.log('Standard Output:', stdout);
+            resolve(stdout);
+        });
     });
 };
 exports.getPrismaCliPath = () => __awaiter(void 0, void 0, void 0, function* () {
@@ -102,15 +118,15 @@ exports.runLocalPrisma = (cmd) => __awaiter(void 0, void 0, void 0, function* ()
     return exports.runLocal(`npx prisma ${cmd} --schema="${schemaPath}"`, Object.assign(Object.assign({}, managementEnv), { PMT_OUTPUT }));
 });
 exports.runDistantPrisma = (cmd, tenant, withTimeout = true) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log('inside runDistantPrimsa');
     const promise = exports.runDistant(`npx prisma ${cmd}`, tenant);
+    console.log(promise);
     if (!withTimeout) {
         return promise;
     }
     return new Promise((resolve, reject) => {
         const timeout = setTimeout(() => {
-            const altCmd = ((tenant === null || tenant === void 0 ? void 0 : tenant.name) ? `prisma-multi-tenant env ${tenant.name} -- ` : '') +
-                'npx prisma ' +
-                cmd;
+            const altCmd = ((tenant === null || tenant === void 0 ? void 0 : tenant.name) ? `prisma-multi-tenant env ${tenant.name} -- ` : '') + 'npx prisma ' + cmd;
             let chalk;
             try {
                 chalk = require('chalk');
@@ -120,13 +136,14 @@ exports.runDistantPrisma = (cmd, tenant, withTimeout = true) => __awaiter(void 0
                 console.log(chalk `\n  {yellow Note: Prisma seems to be unresponsive. Try running \`${altCmd.trim()}\`}\n`);
             }
             else {
-                console.log(`Note: Prisma seems to be unresponnsive. Try running \`${altCmd.trim()}\`}`);
+                console.log(`Note: Prisma seems to be unresponsive. Try running \`${altCmd.trim()}\`}`);
             }
         }, 30 * 1000);
         promise
             .then(() => {
             clearTimeout(timeout);
-            resolve("");
+            console.log('inside resolve promis');
+            resolve('');
         })
             .catch((err) => {
             clearTimeout(timeout);
@@ -137,6 +154,7 @@ exports.runDistantPrisma = (cmd, tenant, withTimeout = true) => __awaiter(void 0
 exports.requireDistant = (name) => {
     var _a;
     const previousEnv = Object.assign({}, process.env);
+    console.log(process.cwd());
     const required = require(require.resolve(name, {
         paths: [
             process.cwd() + '/node_modules/',
@@ -145,6 +163,7 @@ exports.requireDistant = (name) => {
             __dirname + '/../../../',
         ],
     }));
+    console.log(required);
     process.env = previousEnv;
     return required;
 };

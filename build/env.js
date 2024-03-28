@@ -40,10 +40,14 @@ exports.setManagementEnv = () => __awaiter(void 0, void 0, void 0, function* () 
     const managementEnv = yield exports.getManagementEnv();
     Object.entries(managementEnv).forEach(([key, value]) => (process.env[key] = value));
 });
-exports.envPaths = [
-    'C:/Users/Domme/Documents/Coding/Marcatech/GithubOrg/Backend/onestaff-backend/.env',
-];
+exports.envPaths = [process.env.ENV_PATH];
 exports.getEnvPath = (schemaPath) => __awaiter(void 0, void 0, void 0, function* () {
+    if (process.env.ENV_PATH) {
+        const envPathFromEnvVar = process.env.ENV_PATH;
+        if (yield shell_1.fileExists(envPathFromEnvVar)) {
+            return envPathFromEnvVar;
+        }
+    }
     if (schemaPath) {
         const envPath = path_1.default.join(path_1.default.dirname(schemaPath), '.env');
         if (yield shell_1.fileExists(envPath)) {
@@ -51,7 +55,7 @@ exports.getEnvPath = (schemaPath) => __awaiter(void 0, void 0, void 0, function*
         }
     }
     for (const envPath of exports.envPaths) {
-        if (yield shell_1.fileExists(envPath)) {
+        if (envPath && (yield shell_1.fileExists(envPath))) {
             return envPath;
         }
     }
@@ -71,13 +75,11 @@ exports.writeEnvFile = (content, schemaPath) => __awaiter(void 0, void 0, void 0
     }
     return fs_1.default.promises.writeFile(path, content);
 });
-exports.schemaPaths = [
-    'C:/Users/Domme/Documents/Coding/Marcatech/GithubOrg/Backend/onestaff-backend/prisma/schema.prisma',
-];
+exports.schemaPaths = [process.env.SCHEMA_PATH];
 exports.getSchemaPath = () => __awaiter(void 0, void 0, void 0, function* () {
     console.log(exports.schemaPaths);
     for (const schemaPath of exports.schemaPaths) {
-        if (yield shell_1.fileExists(schemaPath)) {
+        if (schemaPath && (yield shell_1.fileExists(schemaPath))) {
             return schemaPath;
         }
     }

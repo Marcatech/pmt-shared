@@ -86,15 +86,39 @@ export const runLocal = async (
 
 // Run from the place where the CLI was called
 export const runDistant = (cmd: string, tenant?: Datasource): Promise<string | Buffer> => {
-  return runShell(cmd, {
-    cwd: process.cwd(),
-    env: {
-      ...process.env,
-      DATABASE_URL: tenant?.url || process.env.DATABASE_URL || 'PMT_TMP_URL',
-    },
+  // Log the command being executed
+  console.log(`Executing command: ${cmd}`)
+  if (tenant) {
+    console.log(`Tenant: ${tenant.name}`)
+  }
+
+  return new Promise((resolve, reject) => {
+    exec(
+      cmd,
+      {
+        cwd: process.cwd(),
+        env: {
+          ...process.env,
+          DATABASE_URL: tenant?.url || process.env.DATABASE_URL || 'PMT_TMP_URL',
+        },
+      },
+      (error, stdout, stderr) => {
+        if (error) {
+          console.error('Error:', error)
+          return reject(error)
+        }
+
+        if (stderr) {
+          console.log('Standard Error Output:', stderr)
+        }
+
+        // Log standard output
+        console.log('Standard Output:', stdout)
+        resolve(stdout)
+      }
+    )
   })
 }
-
 export const getPrismaCliPath = async (): Promise<string> => {
   //const nodeModules = await getNodeModules()
   //return path.join(nodeModules, 'prisma/build/index.js')
@@ -130,8 +154,9 @@ export const runDistantPrisma = async (
   tenant?: Datasource,
   withTimeout = true
 ): Promise<string | Buffer> => {
+  console.log('inside runDistantPrimsa')
   const promise = runDistant(`npx prisma ${cmd}`, tenant)
-
+  console.log(promise)
   if (!withTimeout) {
     return promise
   }
@@ -139,9 +164,7 @@ export const runDistantPrisma = async (
   return new Promise((resolve, reject) => {
     const timeout = setTimeout(() => {
       const altCmd =
-        (tenant?.name ? `prisma-multi-tenant env ${tenant.name} -- ` : '') +
-        'npx prisma ' +
-        cmd
+        (tenant?.name ? `prisma-multi-tenant env ${tenant.name} -- ` : '') + 'npx prisma ' + cmd
       let chalk
       try {
         chalk = require('chalk')
@@ -151,14 +174,15 @@ export const runDistantPrisma = async (
           chalk`\n  {yellow Note: Prisma seems to be unresponsive. Try running \`${altCmd.trim()}\`}\n`
         )
       } else {
-        console.log(`Note: Prisma seems to be unresponnsive. Try running \`${altCmd.trim()}\`}`)
+        console.log(`Note: Prisma seems to be unresponsive. Try running \`${altCmd.trim()}\`}`)
       }
     }, 30 * 1000)
 
     promise
       .then(() => {
         clearTimeout(timeout)
-        resolve("")
+        console.log('inside resolve promis')
+        resolve('')
       })
       .catch((err) => {
         clearTimeout(timeout)
@@ -171,6 +195,7 @@ export const requireDistant = (name: string): any => {
   // Keep previous env so that the required module doesn't update it
   const previousEnv = { ...process.env }
   // eslint-disable-next-line @typescript-eslint/no-var-requires
+  console.log(process.cwd());
   const required = require(require.resolve(name, {
     paths: [
       process.cwd() + '/node_modules/',
@@ -179,6 +204,8 @@ export const requireDistant = (name: string): any => {
       __dirname + '/../../../',
     ],
   }))
+  console.log(required);
+  
   process.env = previousEnv
   return required
 }

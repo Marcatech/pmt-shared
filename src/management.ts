@@ -44,13 +44,23 @@ export default class Management {
   }
 
   async create(tenant: Tenant): Promise<Tenant> {
+    console.log("inside management create");
     const client = await this.getClient()
-
+    console.log("client found");
+    console.log(client);
+    console.log(tenant);
+    
     try {
-      return await client.tenant.create({
+      const result = client.tenant.create({
         data: tenant,
       })
+      console.log("...done");
+      
+      console.log(result);
+      
+      return result;
     } catch (err) {
+      console.log("error happened");
       if ((err as any).code == 'P2002') throw new PmtError('tenant-already-exists', tenant.name)
       throw err
     }

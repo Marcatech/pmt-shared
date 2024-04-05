@@ -55,7 +55,7 @@ class Management {
     }
     async read(name) {
         const client = await this.getClient();
-        const tenant = await client.tenant.findOne({ where: { name } });
+        const tenant = await client.tenant.findUnique({ where: { name } });
         if (!tenant) {
             throw new errors_1.PmtError('tenant-does-not-exist', name);
         }

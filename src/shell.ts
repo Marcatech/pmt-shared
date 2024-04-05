@@ -154,9 +154,7 @@ export const runDistantPrisma = async (
   tenant?: Datasource,
   withTimeout = true
 ): Promise<string | Buffer> => {
-  console.log('inside runDistantPrimsa')
   const promise = runDistant(`npx prisma ${cmd}`, tenant)
-  console.log(promise)
   if (!withTimeout) {
     return promise
   }
@@ -195,7 +193,6 @@ export const requireDistant = (name: string): any => {
   // Keep previous env so that the required module doesn't update it
   const previousEnv = { ...process.env }
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  console.log(process.cwd());
   const required = require(require.resolve(name, {
     paths: [
       process.cwd() + '/node_modules/',
@@ -204,7 +201,6 @@ export const requireDistant = (name: string): any => {
       __dirname + '/../../../',
     ],
   }))
-  console.log(required);
   
   process.env = previousEnv
   return required

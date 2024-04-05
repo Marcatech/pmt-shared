@@ -1,5 +1,9 @@
 "use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.isPrismaCliLocallyInstalled = exports.requireDistant = exports.spawnShell = exports.runLocalPrisma = exports.runDistantPrisma = exports.getNodeModules = exports.fileExists = exports.runShell = exports.Management = exports.translateDatasourceUrl = exports.getSchemaPath = exports.writeSchemaFile = exports.readSchemaFile = exports.writeEnvFile = exports.readEnvFile = exports.envPaths = exports.PmtError = exports.clientManagementPath = void 0;
 var constants_1 = require("./constants");
 Object.defineProperty(exports, "clientManagementPath", { enumerable: true, get: function () { return constants_1.clientManagementPath; } });
 var errors_1 = require("./errors");
@@ -13,7 +17,7 @@ Object.defineProperty(exports, "writeSchemaFile", { enumerable: true, get: funct
 Object.defineProperty(exports, "getSchemaPath", { enumerable: true, get: function () { return env_1.getSchemaPath; } });
 Object.defineProperty(exports, "translateDatasourceUrl", { enumerable: true, get: function () { return env_1.translateDatasourceUrl; } });
 var management_1 = require("./management");
-Object.defineProperty(exports, "Management", { enumerable: true, get: function () { return management_1.default; } });
+Object.defineProperty(exports, "Management", { enumerable: true, get: function () { return __importDefault(management_1).default; } });
 var shell_1 = require("./shell");
 Object.defineProperty(exports, "runShell", { enumerable: true, get: function () { return shell_1.runShell; } });
 Object.defineProperty(exports, "fileExists", { enumerable: true, get: function () { return shell_1.fileExists; } });

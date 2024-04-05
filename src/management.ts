@@ -23,8 +23,8 @@ export default class Management {
 
     await setManagementEnv()
 
-    let PrismaClient  
-    
+    let PrismaClient
+
     if (this.options?.PrismaClient) {
       PrismaClient = this.options?.PrismaClient
     } else {
@@ -44,26 +44,24 @@ export default class Management {
   }
 
   async create(tenant: Tenant): Promise<Tenant> {
-    console.log("inside management create");
-    const client = await this.getClient()
-    console.log("client found");
-    console.log(client);
-    console.log(tenant);
-    
+    let client;
+    let result;
     try {
-      const result = client.tenant.create({
+        client = await this.getClient();
+        result = await client.tenant.create({
         data: tenant,
       })
-      console.log("...done");
-      
-      console.log(result);
-      
-      return result;
     } catch (err) {
-      console.log("error happened");
       if ((err as any).code == 'P2002') throw new PmtError('tenant-already-exists', tenant.name)
       throw err
+    } finally {
+      if (client) {
+        console.log("Disconnecting Prisma client");
+        await client.$disconnect();
+        if (result) return result; 
+      }
     }
+    return result;
   }
 
   async read(name: string): Promise<Tenant> {

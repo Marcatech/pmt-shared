@@ -1,6 +1,6 @@
 {
   "name": "prisma-multi-tenant-shared-updated",
-  "version": "2.5.11",
+  "version": "2.5.18",
   "description": "Shared methods and constants for prisma-multi-tenant",
   "author": {
     "name": "Thibaud Courtoison",
@@ -32,7 +32,7 @@
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
     "prettier": "^2.0.5",
-    "typescript": "^3.9.6"
+    "typescript": "^5.4.3"
   },
   "repository": {
     "type": "git",

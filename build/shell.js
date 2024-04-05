@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -21,12 +12,12 @@ const errors_1 = require("./errors");
 const constants_1 = require("./constants");
 const env_1 = require("./env");
 let nodeModulesPath;
-exports.runShell = (cmd, options) => {
+const runShell = (cmd, options) => {
     if (process.env.verbose == 'true') {
         console.log('  $> ' + cmd);
     }
     return new Promise((resolve, reject) => {
-        child_process_1.exec(cmd, options, (error, stdout, stderr) => {
+        (0, child_process_1.exec)(cmd, options, (error, stdout, stderr) => {
             if (process.env.verbose == 'true') {
                 console.log(stderr || stdout);
             }
@@ -36,26 +27,29 @@ exports.runShell = (cmd, options) => {
         });
     });
 };
-exports.spawnShell = (cmd) => {
+exports.runShell = runShell;
+const spawnShell = (cmd) => {
     const [command, ...commandArguments] = cmd.split(' ');
-    return new Promise((resolve) => child_process_1.spawn(command, commandArguments, {
+    return new Promise((resolve) => (0, child_process_1.spawn)(command, commandArguments, {
         stdio: 'inherit',
         env: process.env,
         shell: true,
     }).on('exit', (exitCode) => resolve(exitCode)));
 };
-exports.fileExists = (path) => {
+exports.spawnShell = spawnShell;
+const fileExists = (path) => {
     return fs_1.default.promises
         .access(path, fs_1.default.constants.R_OK)
         .then(() => true)
         .catch(() => false);
 };
-exports.getNodeModules = (cwd) => __awaiter(void 0, void 0, void 0, function* () {
+exports.fileExists = fileExists;
+const getNodeModules = async (cwd) => {
     if (nodeModulesPath)
         return nodeModulesPath;
     let currentPath = cwd || process.cwd();
     do {
-        if (yield exports.fileExists(path_1.default.join(currentPath, 'node_modules'))) {
+        if (await (0, exports.fileExists)(path_1.default.join(currentPath, 'node_modules'))) {
             nodeModulesPath = path_1.default.join(currentPath, 'node_modules');
         }
         else {
@@ -68,21 +62,23 @@ exports.getNodeModules = (cwd) => __awaiter(void 0, void 0, void 0, function* ()
         }
     } while (!nodeModulesPath);
     return nodeModulesPath;
-});
-exports.runLocal = (cmd, env) => __awaiter(void 0, void 0, void 0, function* () {
-    const sharedPath = yield find_up_1.default('node_modules/@prisma-multi-tenant/shared/build');
-    return exports.runShell(cmd, {
+};
+exports.getNodeModules = getNodeModules;
+const runLocal = async (cmd, env) => {
+    const sharedPath = await (0, find_up_1.default)('node_modules/@prisma-multi-tenant/shared/build');
+    return (0, exports.runShell)(cmd, {
         cwd: sharedPath || '',
         env: Object.assign(Object.assign({}, process.env), env),
     });
-});
-exports.runDistant = (cmd, tenant) => {
+};
+exports.runLocal = runLocal;
+const runDistant = (cmd, tenant) => {
     console.log(`Executing command: ${cmd}`);
     if (tenant) {
         console.log(`Tenant: ${tenant.name}`);
     }
     return new Promise((resolve, reject) => {
-        child_process_1.exec(cmd, {
+        (0, child_process_1.exec)(cmd, {
             cwd: process.cwd(),
             env: Object.assign(Object.assign({}, process.env), { DATABASE_URL: (tenant === null || tenant === void 0 ? void 0 : tenant.url) || process.env.DATABASE_URL || 'PMT_TMP_URL' }),
         }, (error, stdout, stderr) => {
@@ -98,29 +94,31 @@ exports.runDistant = (cmd, tenant) => {
         });
     });
 };
-exports.getPrismaCliPath = () => __awaiter(void 0, void 0, void 0, function* () {
-    const path = yield find_up_1.default('node_modules/prisma/build/index.js');
+exports.runDistant = runDistant;
+const getPrismaCliPath = async () => {
+    const path = await (0, find_up_1.default)('node_modules/prisma/build/index.js');
     if (!path) {
         throw new Error('Cannot find prisma');
     }
     return path;
-});
-exports.isPrismaCliLocallyInstalled = () => __awaiter(void 0, void 0, void 0, function* () {
-    return exports.getPrismaCliPath()
+};
+exports.getPrismaCliPath = getPrismaCliPath;
+const isPrismaCliLocallyInstalled = async () => {
+    return (0, exports.getPrismaCliPath)()
         .then(() => true)
         .catch(() => false);
-});
-exports.runLocalPrisma = (cmd) => __awaiter(void 0, void 0, void 0, function* () {
-    const managementEnv = yield env_1.getManagementEnv();
-    const nodeModules = yield exports.getNodeModules();
+};
+exports.isPrismaCliLocallyInstalled = isPrismaCliLocallyInstalled;
+const runLocalPrisma = async (cmd) => {
+    const managementEnv = await (0, env_1.getManagementEnv)();
+    const nodeModules = await (0, exports.getNodeModules)();
     const PMT_OUTPUT = path_1.default.join(nodeModules, constants_1.clientManagementPath);
     const schemaPath = path_1.default.join(__dirname, 'prisma/schema.prisma');
-    return exports.runLocal(`npx prisma ${cmd} --schema="${schemaPath}"`, Object.assign(Object.assign({}, managementEnv), { PMT_OUTPUT }));
-});
-exports.runDistantPrisma = (cmd, tenant, withTimeout = true) => __awaiter(void 0, void 0, void 0, function* () {
-    console.log('inside runDistantPrimsa');
-    const promise = exports.runDistant(`npx prisma ${cmd}`, tenant);
-    console.log(promise);
+    return (0, exports.runLocal)(`npx prisma ${cmd} --schema="${schemaPath}"`, Object.assign(Object.assign({}, managementEnv), { PMT_OUTPUT }));
+};
+exports.runLocalPrisma = runLocalPrisma;
+const runDistantPrisma = async (cmd, tenant, withTimeout = true) => {
+    const promise = (0, exports.runDistant)(`npx prisma ${cmd}`, tenant);
     if (!withTimeout) {
         return promise;
     }
@@ -150,11 +148,11 @@ exports.runDistantPrisma = (cmd, tenant, withTimeout = true) => __awaiter(void 0
             reject(err);
         });
     });
-});
-exports.requireDistant = (name) => {
+};
+exports.runDistantPrisma = runDistantPrisma;
+const requireDistant = (name) => {
     var _a;
     const previousEnv = Object.assign({}, process.env);
-    console.log(process.cwd());
     const required = require(require.resolve(name, {
         paths: [
             process.cwd() + '/node_modules/',
@@ -163,7 +161,7 @@ exports.requireDistant = (name) => {
             __dirname + '/../../../',
         ],
     }));
-    console.log(required);
     process.env = previousEnv;
     return required;
 };
+exports.requireDistant = requireDistant;

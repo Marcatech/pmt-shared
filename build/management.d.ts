@@ -2,7 +2,7 @@ import { Datasource } from './types';
 interface ManagementOptions {
     PrismaClient?: any;
 }
-declare type Tenant = Datasource;
+type Tenant = Datasource;
 export default class Management {
     private options?;
     private client?;

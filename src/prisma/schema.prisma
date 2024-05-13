@@ -10,6 +10,26 @@ generator client {
 }
 
 model Tenant {
-  name     String @id
-  url      String
+  id    Int    @id @default(autoincrement())
+  name  String @unique
+  url   String @unique
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  username     String
+  email        String    @unique
+  password     String?
+  provider     String?
+  providerId   String?
+  refreshToken String?
+  lastIp       String?
+  language     Language? @default(IT)
+  lastTenantName String?
+}
+
+enum Language {
+  EN
+  IT
+  DE
 }

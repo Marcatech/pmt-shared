@@ -1,6 +1,6 @@
 {
   "name": "prisma-multi-tenant-shared-updated",
-  "version": "2.5.22",
+  "version": "2.5.23",
   "description": "Shared methods and constants for prisma-multi-tenant",
   "author": {
     "name": "Thibaud Courtoison",

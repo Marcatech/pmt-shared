@@ -13,7 +13,6 @@ model Tenant {
   id    Int    @id @default(autoincrement())
   name  String @unique
   url   String @unique
-  users User[] @relation("UserTenant")
 }
 
 model User {
@@ -26,8 +25,7 @@ model User {
   refreshToken String?
   lastIp       String?
   language     Language? @default(IT)
-  lastTenantId Int?
-  lastTenant   Tenant?   @relation(fields: [lastTenantId], references: [id], name: "UserTenant")
+  lastTenantName String?
 }
 
 enum Language {

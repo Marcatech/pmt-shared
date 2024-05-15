@@ -78,9 +78,14 @@ const runDistant = (cmd, tenant) => {
         console.log(`Tenant: ${tenant.name}`);
     }
     return new Promise((resolve, reject) => {
+        var _a, _b, _c;
+        const baseDbUrl = `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}`;
+        const isFullUrl = (_a = tenant === null || tenant === void 0 ? void 0 : tenant.url) === null || _a === void 0 ? void 0 : _a.startsWith('postgresql://');
+        const fullDbUrl = isFullUrl ? tenant === null || tenant === void 0 ? void 0 : tenant.url : `${baseDbUrl}?ß=${(_b = tenant === null || tenant === void 0 ? void 0 : tenant.url) !== null && _b !== void 0 ? _b : ''}`;
+        console.log(baseDbUrl);
         (0, child_process_1.exec)(cmd, {
             cwd: process.cwd(),
-            env: Object.assign(Object.assign({}, process.env), { DATABASE_URL: (tenant === null || tenant === void 0 ? void 0 : tenant.url) || process.env.DATABASE_URL || 'PMT_TMP_URL' }),
+            env: Object.assign(Object.assign({}, process.env), { DATABASE_URL: (_c = fullDbUrl !== null && fullDbUrl !== void 0 ? fullDbUrl : process.env.DATABASE_URL) !== null && _c !== void 0 ? _c : 'PMT_TMP_URL' }),
         }, (error, stdout, stderr) => {
             if (error) {
                 console.error('Error:', error);

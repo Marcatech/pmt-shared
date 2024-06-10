@@ -95,7 +95,7 @@ export const runDistant = (cmd: string, tenant?: Datasource): Promise<string | B
   return new Promise((resolve, reject) => {
     const baseDbUrl = `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}`;
     const isFullUrl = tenant?.url?.startsWith('postgresql://');
-    const fullDbUrl = isFullUrl ? tenant?.url : `${baseDbUrl}?ß=${tenant?.url ?? ''}`;
+    const fullDbUrl = isFullUrl ? tenant?.url : `${baseDbUrl}?schema=${tenant?.url ?? ''}`;
     console.log(baseDbUrl);
     
     exec(

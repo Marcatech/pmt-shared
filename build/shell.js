@@ -81,7 +81,7 @@ const runDistant = (cmd, tenant) => {
         var _a, _b, _c;
         const baseDbUrl = `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.POSTGRES_HOST}:${process.env.POSTGRES_PORT}/${process.env.POSTGRES_DB}`;
         const isFullUrl = (_a = tenant === null || tenant === void 0 ? void 0 : tenant.url) === null || _a === void 0 ? void 0 : _a.startsWith('postgresql://');
-        const fullDbUrl = isFullUrl ? tenant === null || tenant === void 0 ? void 0 : tenant.url : `${baseDbUrl}?ß=${(_b = tenant === null || tenant === void 0 ? void 0 : tenant.url) !== null && _b !== void 0 ? _b : ''}`;
+        const fullDbUrl = isFullUrl ? tenant === null || tenant === void 0 ? void 0 : tenant.url : `${baseDbUrl}?schema=${(_b = tenant === null || tenant === void 0 ? void 0 : tenant.url) !== null && _b !== void 0 ? _b : ''}`;
         console.log(baseDbUrl);
         (0, child_process_1.exec)(cmd, {
             cwd: process.cwd(),

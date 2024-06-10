@@ -32,4 +32,5 @@ enum Language {
   EN
   IT
   DE
+  FR
 }

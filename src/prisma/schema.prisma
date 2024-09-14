@@ -10,22 +10,52 @@ generator client {
 }
 
 model Tenant {
-  id    Int    @id @default(autoincrement())
-  name  String @unique
-  url   String @unique
+  id           Int           @id @default(autoincrement())
+  name         String        @unique
+  url          String        @unique
+  TenantConfig TenantConfig?
+}
+
+model TenantConfig {
+  id                      Int     @id @default(autoincrement())
+  isEncryptionMandatory   Boolean @default(false)
+  isPasswordSet           Boolean @default(false)
+  encryptedPassword       String?
+  testPasswordValue       String?
+  testBackupPasswordValue String?
+  housingChiefMail        String?
+  workConsultantMail      String?
+  tenant                  Tenant  @relation(fields: [tenantId], references: [id])
+  tenantId                Int     @unique
+}
+
+model PendingVerificationUser {
+  token     String   @id @unique
+  username  String
+  email     String   @unique
+  password  String
+  issueTime DateTime @default(now())
+}
+
+model GlobalConfig {
+  id               Int       @id @default(autoincrement())
+  termsChangedAt   DateTime? @default(now())
+  privacyChangedAt DateTime? @default(now())
 }
 
 model User {
-  id           Int       @id @default(autoincrement())
-  username     String
-  email        String    @unique
-  password     String?
-  provider     String?
-  providerId   String?
-  refreshToken String?
-  lastIp       String?
-  language     Language? @default(IT)
-  lastTenantName String?
+  id                Int       @id @default(autoincrement())
+  username          String
+  email             String    @unique
+  password          String?
+  provider          String?
+  providerId        String?
+  refreshToken      String?
+  lastIp            String?
+  language          Language? @default(IT)
+  lastTenantName    String?
+  termsAcceptedAt   DateTime? @default(now())
+  privacyAcceptedAt DateTime? @default(now())
 }
 
 enum Language {
